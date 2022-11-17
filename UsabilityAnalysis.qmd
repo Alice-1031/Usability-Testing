@@ -1,0 +1,118 @@
+---
+title: "UsabilityAnalysis"
+format: html
+editor: visual
+---
+
+
+```{r}
+library(Cairo)
+library(plotly)
+library(tidytext)
+library(dplyr)
+library(ggplot2)
+library(readxl)
+
+```
+
+```{r}
+UsabilityData <- read_excel("Usability Tests Data.xlsx", 
+    sheet = "UsabilityData")
+SurveyData <- UsabilityData %>%
+  filter(Test >= 5)
+UsabilityData <- UsabilityData %>%
+  filter(Test < 5)
+
+```
+```{r}
+TimesGraph <- ggplot(data = UsabilityData) +
+  geom_point(aes(x=Test, y=UsabilityData$Proportion, color = Name)) +
+  #geom_line(aes(x=Test, y=UsabilityData$Proportion, color = Name, group = Name)) +
+  geom_smooth(aes(x=Test, y=UsabilityData$Proportion), se = FALSE, color = "#6F1743") +
+  ggtitle("Time Taken To complete Usability Testing Tasks") + 
+  ylab ("Proportion of Time Spent on Task") +
+  xlab ("Task") +
+  #scale_color_manual(labels = c("F" = "Women", "M" = "Men", "U" = "Unknown"),
+   #                 values = c("#e82b6f", "dodgerblue1", "light green")) +
+  theme(
+    plot.title = element_text(size = 24, face = "bold", color = "#6F1743"),
+    panel.background = element_rect(fill = "#F5F0E3"),
+    axis.text = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 18, color = "black")
+  ) +
+  #labs (size = "Number of Testers") +
+  scale_x_discrete(limits=c("Task 1", "Task 2", "Task 3", "Task 4")) +
+  scale_y_continuous(breaks = seq(0, 60, by = 20), labels=c("0%", "20%", "40%", "60%")) 
+TimesGraph
+```
+
+```{R}
+
+TimesGraph2 <- ggplot(data = UsabilityData) +
+  geom_point(aes(x=Test, y=Time, color = Name)) +
+  geom_line(aes(x=Test, y=Time, color = Name, group = Name)) +
+  #geom_smooth(aes(x=Test, y=Time, color = Name), method = lm, se = FALSE) +
+  ggtitle("Time Taken To complete Usability Testing Tasks") + 
+  ylab ("Time to Complete Task (min)") +
+  xlab ("Task") +
+  #scale_color_manual(labels = c("F" = "Women", "M" = "Men", "U" = "Unknown"),
+   #                 values = c("#e82b6f", "dodgerblue1", "light green")) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold")
+  )
+TimesGraph2
+
+```
+
+```{r}
+SurveyData1 <- SurveyData %>%
+  filter(Test > 5 && Test <10)
+SurveyData2 <- SurveyData %>%
+  filter(Test == 5)
+SurveyData3 <- SurveyData %>%
+  filter(Test >= 10)
+
+#png("TaskRanking.png")
+#png(filename="TaskRanking.png", type = 'cairo', units = "in", width =10, height = 7, pointsize = 12, res = 300)
+#print(Survey1)
+#dev.off()
+
+Survey1 <- ggplot(data = SurveyData3) +
+  geom_count(aes(x=Time, y=Test)) +
+  #geom_line(aes(x=Time, y=Test, color = Name, group = Name)) +
+  geom_smooth(aes(x=Time, y=Test), se = FALSE, color = "#6F1743") +
+  ggtitle("Ranking of Task Difficulty") + 
+  ylab ("Task Ranking") +
+  xlab (" ") +
+  #geom_smooth(aes(x=UsabilityData$Test, y=UsabilityData$Proportion*4/60 + 10), se = FALSE, color = "#F5A0B3") +
+  #scale_y_continuous(limits=c(10, 13),
+           #sec.axis = sec_axis(~ . *60/4 -9 , name = "Proportion of Time Spent on Task") ) +
+  
+  theme(
+    plot.title = element_text(size = 24, face = "bold", color = "#6F1743"),
+    panel.background = element_rect(fill = "#F5F0E3"),
+    axis.text = element_text(size = 14, color = "black"),
+    axis.title.y = element_text(size = 18, color = "black")
+  ) +
+  labs (size = "Number of Testers") +
+  scale_x_discrete(limits=c("Task 1", "Task 2", "Task 3", "Task 4")) +
+  scale_y_continuous(breaks = seq(9, 14, 1), labels=c("", "Easiest", "Easy", "Difficult", "Most Difficult", "")) 
+Survey1
+```
+
+
+```{R}
+Survey2 <- ggplot(data = SurveyData2) +
+  geom_point(aes(x=Test, y=Time, color = Name)) +
+  #geom_line(aes(x=Test, y=Time, color = Name, group = Name)) +
+  #geom_smooth(aes(x=Test, y=Time, color = Name), method = lm, se = FALSE) +
+  ggtitle("Time Taken To complete Usability Testing Tasks") + 
+  ylab ("Time to Complete Task (min)") +
+  xlab ("Task") +
+  #scale_color_manual(labels = c("F" = "Women", "M" = "Men", "U" = "Unknown"),
+   #                 values = c("#e82b6f", "dodgerblue1", "light green")) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold")
+  ) 
+#Survey2
+```
